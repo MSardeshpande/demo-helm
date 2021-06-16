@@ -1,0 +1,1 @@
+clean install -DskipTests -Ddocker.user=msardes -Ddocker.password=Elegant@1 -Ddocker.url=https://hub.docker.com -U

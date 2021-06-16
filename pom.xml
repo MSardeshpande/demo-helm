@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+<parent>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-parent</artifactId>
+  <version>2.4.5</version>
+  <relativePath/>
+</parent>
+<groupId>com.example</groupId>
+<artifactId>demo</artifactId>
+<version>0.0.1-SNAPSHOT</version>
+<name>demo</name>
+<description>Demo project for Spring Boot</description>
+<properties>
+  <java.version>11</java.version>
+  <os.detection.classifierWithLikes>fedora</os.detection.classifierWithLikes>
+</properties>
+
+
+
+
+
+<dependencies>
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+  </dependency>
+
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+  </dependency>
+
+  <dependency>
+    <groupId>org.microbean</groupId>
+    <artifactId>helm-maven-plugin</artifactId>
+    <version>2.7.2.1.0.1</version>
+    <exclusions>
+      <exclusion>          <!-- declare the exclusion here -->
+        <groupId>io.netty</groupId>
+        <artifactId>netty-tcnative-boringssl-static</artifactId>
+      </exclusion>
+    </exclusions>
+  </dependency>
+
+  <dependency>
+    <groupId>io.netty</groupId>
+    <artifactId>netty-tcnative-boringssl-static</artifactId>
+    <version>2.0.0.Final</version>
+    <classifier>${os.detected.classifier}</classifier>
+  </dependency>
+
+
+
+</dependencies>
+
+<build>
+
+  <extensions>
+    <extension>
+      <groupId>kr.motd.maven</groupId>
+      <artifactId>os-maven-plugin</artifactId>
+      <version>1.4.0.Final</version>
+    </extension>
+  </extensions>
+
+  <plugins>
+
+    <plugin>
+      <groupId>org.codehaus.mojo</groupId>
+      <artifactId>exec-maven-plugin</artifactId>
+      <version>1.6.0</version>
+
+      <executions>
+        <!-- <execution>
+    <id>docker-clean</id>
+    <phase>install</phase>
+    <goals>
+      <goal>exec</goal>
+    </goals>
+    <configuration>
+      <executable>docker</executable>
+      <workingDirectory>${project.basedir}</workingDirectory>
+      <arguments>
+        <argument>rmi</argument>
+        <argument>${project.groupId}/${project.artifactId}:${project.version}</argument>
+    
+      </arguments>
+    </configuration>
+  </execution>
+-->
+        <execution>
+          <id>docker-build</id>
+          <phase>install</phase>
+          <goals>
+            <goal>exec</goal>
+          </goals>
+          <configuration>
+            <executable>docker</executable>
+            <workingDirectory>${project.basedir}</workingDirectory>
+            <arguments>
+              <argument>build</argument>
+              <argument>-t</argument>
+              <argument>${project.groupId}/${project.artifactId}:${project.version}</argument>
+              <argument>.</argument>
+            </arguments>
+          </configuration>
+        </execution>
+      </executions>
+
+
+    </plugin>
+
+
+
+    <plugin>
+      <groupId>org.microbean</groupId>
+      <artifactId>helm-maven-plugin</artifactId>
+
+      <executions>
+        <execution>
+          <id>Package your-project chart</id>
+          <phase>generate-sources</phase>            <!-- pick a suitable phase, though this seems good -->
+          <goals>
+            <goal>package</goal>
+          </goals>
+          <configuration>
+            <chartContentsUri>file:${project.basedir}/src/helm/charts/${project.artifactId}</chartContentsUri>
+            <chartTargetUri>file:${project.build.directory}/target/helm/charts/${project.artifactId}.tgz</chartTargetUri>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+
+
+
+  </plugins>
+</build>
+
+</project>
